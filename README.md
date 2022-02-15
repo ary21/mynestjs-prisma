@@ -18,3 +18,6 @@ NestJS, Prisma, Postgres
 - reset db dev and run seed
 - > npx prisma migrate reset
 
+### Prisma studio
+- gui table on browser
+- > npx prisma studio

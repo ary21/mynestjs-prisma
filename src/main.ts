@@ -7,6 +7,6 @@ async function bootstrap() {
 
   await app.init();
   await app.listen(port);
-  console.log(`App initialized on ${port}`);
+  console.log(`🚀🚀.... App initialized on ${port} ...🚀`);
 }
 bootstrap();
