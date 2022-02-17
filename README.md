@@ -13,10 +13,15 @@ NestJS, Prisma, Postgres
 - > nest g resource <resource_name>
 
 ### Migration :
-- make change prisma.schema
+- make change schema.prisma
 - > npx prisma migrate dev
 - reset db dev and run seed
 - > npx prisma migrate reset
+
+### ERD generate 
+- after make change schema.prisma
+- > npx prisma generate
+- output on "../ERD.png"
 
 ### Prisma studio
 - gui table on browser

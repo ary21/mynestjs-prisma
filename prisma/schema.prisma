@@ -1,6 +1,12 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+generator erd {
+  provider = "prisma-erd-generator"
+  theme = "neutral"
+  output = "../ERD.png"
+}
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,12 +17,14 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  nik  String?
-  deviceToken  String?
-  posts Post[]
+  id            Int     @id @default(autoincrement())
+  email         String  @unique
+  name          String?
+  nik           String?
+  deviceToken   String?
+  role          UserRole @default(USER)
+  posts         Post[]
+  jobs          Job[]
 }
 
 model Post {
@@ -29,4 +37,53 @@ model Post {
   viewCount Int      @default(0)
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
+}
+
+model Job {
+  id        Int @id @default(autoincrement())
+  title     String
+  jobDateTime DateTime
+  status    JobStatus @default(AVAILABLE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User @relation(fields: [userId], references: [id])
+  invoice   Invoice?
+  jobNotes  JobNote[]
+}
+
+model JobNote {
+  id        Int @id @default(autoincrement())
+  note      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  jobId     Int
+  job       Job @relation(fields: [jobId], references: [id])
+}
+
+model Invoice {
+  id        Int @id @default(autoincrement())
+  invoiceNumber String
+  total     Int
+  status    InvoiceStatus @default(UNPAID)
+  jobId     Int
+  job       Job @relation(fields: [jobId], references: [id])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum JobStatus {
+  AVAILABLE
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PAID
 }
