@@ -8,10 +8,12 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PostQuery } from './dto/post-query';
 
 @Controller('posts')
 export class PostsController {
@@ -29,8 +31,8 @@ export class PostsController {
   }
 
   @Get()
-  findAll() {
-    return this.postsService.posts({});
+  findAll(@Query() query: PostQuery) {
+    return this.postsService.posts(query);
   }
 
   @Get(':id')

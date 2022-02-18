@@ -35,9 +35,7 @@ export class AppController {
 
   @Get('feed')
   async getPublishedPosts(): Promise<PostModel[]> {
-    return this.postService.posts({
-      where: { published: true },
-    });
+    return this.postService.posts({ published: true });
   }
 
   @Get('filtered-posts/:searchString')
@@ -45,16 +43,8 @@ export class AppController {
     @Param('searchString') searchString: string,
   ): Promise<PostModel[]> {
     return this.postService.posts({
-      where: {
-        OR: [
-          {
-            title: { contains: searchString },
-          },
-          {
-            content: { contains: searchString },
-          },
-        ],
-      },
+      title: searchString,
+      content: searchString,
     });
   }
 

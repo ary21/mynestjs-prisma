@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Post, Prisma } from '@prisma/client';
+import { PostQuery } from './dto/post-query';
 
 @Injectable()
 export class PostsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {
+    prisma.$on<any>('query', (event: Prisma.QueryEvent) => {
+      console.log('Query: ' + event.query);
+      console.log('Duration: ' + event.duration + 'ms');
+    });
+  }
 
   async post(
     postWhereUniqueInput: Prisma.PostWhereUniqueInput,
@@ -14,20 +20,36 @@ export class PostsService {
     });
   }
 
-  async posts(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.PostWhereUniqueInput;
-    where?: Prisma.PostWhereInput;
-    orderBy?: Prisma.PostOrderByWithRelationInput;
-  }): Promise<Post[]> {
-    const { skip, take, cursor, where, orderBy } = params;
+  async posts(params: PostQuery): Promise<Post[]> {
+    const { skip, take, title, content, published, orderBy, orderWith } =
+      params;
+    let order: Prisma.PostOrderByWithRelationInput = { id: 'desc' };
+    if (orderBy === 'title') {
+      order = { title: orderWith === 'asc' ? 'asc' : 'desc' };
+    }
+
+    let where: Prisma.PostWhereInput = {};
+    if (title || content) {
+      where = {
+        ...where,
+        OR: [
+          { title: { contains: title, mode: 'insensitive' } },
+          {
+            content: { contains: content, mode: 'insensitive' },
+          },
+        ],
+      };
+    }
+
+    if (published) {
+      where.published = true;
+    }
+
     return this.prisma.post.findMany({
       skip,
       take,
-      cursor,
       where,
-      orderBy,
+      orderBy: order,
     });
   }
 
