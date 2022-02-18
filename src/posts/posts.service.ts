@@ -46,9 +46,9 @@ export class PostsService {
     }
 
     return this.prisma.post.findMany({
-      skip,
-      take,
       where,
+      skip: skip ? +skip : undefined,
+      take: take ? +take : undefined,
       orderBy: order,
     });
   }
