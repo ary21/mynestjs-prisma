@@ -37,9 +37,13 @@ export class PostsService {
       order = { title: orderWith === 'asc' ? 'asc' : 'desc' };
     }
 
-    let where: Prisma.PostWhereInput = {};
-    if (title || content || authorName) {
-      where = {
+    const where: Prisma.PostWhereInput = {};
+    if (published) {
+      where.published = true;
+    }
+
+    return this.prisma.post.findMany({
+      where: {
         ...where,
         OR: [
           { title: { contains: title, mode: 'insensitive' } },
@@ -55,15 +59,7 @@ export class PostsService {
             },
           },
         ],
-      };
-    }
-
-    if (published) {
-      where.published = true;
-    }
-
-    return this.prisma.post.findMany({
-      where,
+      },
       skip: skip ? +skip : undefined,
       take: take ? +take : undefined,
       orderBy: order,
