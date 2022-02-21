@@ -35,6 +35,12 @@ export class PostsController {
     return this.postsService.posts(query);
   }
 
+  @Get('by-author')
+  findAllByAuthor(@Query() query: PostQuery) {
+    const { authorName } = query;
+    return this.postsService.posts({ authorName });
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.postsService.post({ id: +id });

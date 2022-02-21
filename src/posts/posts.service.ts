@@ -21,15 +21,24 @@ export class PostsService {
   }
 
   async posts(params: PostQuery): Promise<Post[]> {
-    const { skip, take, title, content, published, orderBy, orderWith } =
-      params;
+    // cursor ==> https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination
+    const {
+      skip,
+      take,
+      title,
+      content,
+      published,
+      authorName,
+      orderBy,
+      orderWith,
+    } = params;
     let order: Prisma.PostOrderByWithRelationInput = { id: 'desc' };
     if (orderBy === 'title') {
       order = { title: orderWith === 'asc' ? 'asc' : 'desc' };
     }
 
     let where: Prisma.PostWhereInput = {};
-    if (title || content) {
+    if (title || content || authorName) {
       where = {
         ...where,
         OR: [
@@ -37,6 +46,7 @@ export class PostsService {
           {
             content: { contains: content, mode: 'insensitive' },
           },
+          { author: { name: { contains: authorName, mode: 'insensitive' } } },
         ],
       };
     }
@@ -50,6 +60,9 @@ export class PostsService {
       skip: skip ? +skip : undefined,
       take: take ? +take : undefined,
       orderBy: order,
+      include: {
+        author: true,
+      },
     });
   }
 
