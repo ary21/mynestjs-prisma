@@ -46,7 +46,14 @@ export class PostsService {
           {
             content: { contains: content, mode: 'insensitive' },
           },
-          { author: { name: { contains: authorName, mode: 'insensitive' } } },
+          {
+            author: {
+              OR: [
+                { name: { contains: authorName, mode: 'insensitive' } },
+                { email: { contains: authorName, mode: 'insensitive' } },
+              ],
+            },
+          },
         ],
       };
     }
