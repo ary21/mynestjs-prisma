@@ -14,7 +14,10 @@ NestJS, Prisma, Postgres
 
 ### Migration :
 - make change schema.prisma
+- dev/local :
 - > npx prisma migrate dev
+- prod :
+- > npx prisma migrate deploy
 - reset db dev and run seed
 - > npx prisma migrate reset
 

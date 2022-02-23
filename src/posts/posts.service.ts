@@ -75,6 +75,40 @@ export class PostsService {
     });
   }
 
+  async createSome(email: string, amount: number) {
+    await this.prisma.$transaction(async (prisma) => {
+      const author = await prisma.user.findUnique({ where: { email } });
+
+      if (!author) {
+        throw new Error(`${email} not found`);
+      }
+
+      const post = await prisma.post.update({
+        data: {
+          viewCount: {
+            increment: amount,
+          },
+        },
+        where: {
+          id: 1,
+        },
+      });
+
+      if (post.viewCount < 0) {
+        throw new Error(`${email} doesn't have enough to send ${amount}`);
+      }
+
+      await prisma.user.update({
+        data: {
+          deviceToken: new Date().toString(),
+        },
+        where: {
+          email: email,
+        },
+      });
+    });
+  }
+
   async updatePost(params: {
     where: Prisma.PostWhereUniqueInput;
     data: Prisma.PostUpdateInput;

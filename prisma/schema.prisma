@@ -9,6 +9,7 @@ generator erd {
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -25,6 +26,7 @@ model User {
   role          UserRole @default(USER)
   posts         Post[]
   jobs          Job[]
+  deleted       Boolean @default(false)
 }
 
 model Post {
@@ -37,6 +39,7 @@ model Post {
   viewCount Int      @default(0)
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
+  deleted   Boolean @default(false)
 }
 
 model Job {
@@ -50,6 +53,7 @@ model Job {
   user      User @relation(fields: [userId], references: [id])
   invoice   Invoice?
   jobNotes  JobNote[]
+  deleted   Boolean @default(false)
 }
 
 model JobNote {
